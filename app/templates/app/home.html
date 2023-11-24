@@ -2,6 +2,50 @@
 
 {% block content %}
 <div class="container mt-5 mb-5 text-center">
-  <h2 class="mb-4">App Home</h2>
+  <h2 class="mb-4">Todo App</h2>
 </div>
+
+<div class="container">
+  <div class="container-fluid">
+    <button class="btn btn-primary d-flex col-md-6 mx-auto"  _="on click remove .d-none from #todo-form  then add .d-none on me" id="create-new"><span class="mx-auto">New todo</span></button>
+  </div>
+  <div class="row">
+    <form method="post" id="todo-form" class="d-none col-md-6">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary" _="on click remove .d-none from #create-new then remove .d-none on #todos">Add Todo</button>
+    </form>
+
+    <div class="container col-md-6" id="todos">
+      {% for todo in todos %}
+        {% if todo.user == user %}
+        <div class="card mt-3">
+          <div class="card-header">
+            {% if todo.completed %}
+              <h3 class="card-title" style="text-decoration: line-through;"> {{ todo.title }}</h3>
+            {% else %}
+              <h3 class="card-title"> {{ todo.title }}</h3>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <p class="card-text"> {{ todo.description }}</p>
+          </div>
+          <div class="row mb-3">
+            <form action="{% url 'app:delete' pk=todo.id %}" method="post" class="col-md-3">
+              {% csrf_token %}
+              <button class="btn btn-danger mx-3">Delete</button>
+            </form>
+
+            <form action="{% url 'app:complete' pk=todo.id %}" method="post" class="col-md-3">
+              {% csrf_token %}
+              <button class="btn btn-success">{% if todo.completed %} Not Completed {% else %} Completed {% endif %}</button>
+            </form>
+          </div>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
 {% endblock %}
